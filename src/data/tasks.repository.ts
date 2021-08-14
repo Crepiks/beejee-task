@@ -1,4 +1,5 @@
 import request from "./request";
+import config from "../config";
 import { Task } from "../entities/task";
 import { CreateTaskDto } from "../dto/create-task.dto";
 import { UpdateTaskStatusDto } from "../dto/update-task-status.dto";
@@ -11,7 +12,7 @@ class TasksRepository {
     sortOrder: "asc" | "desc"
   ) {
     const res = await request.get(
-      `?developer=sayazhan&page=${page}&sort_field=${sortField}&sort_direction=${sortOrder}`
+      `?developer=${config.apiDeveloper}&page=${page}&sort_field=${sortField}&sort_direction=${sortOrder}`
     );
     const total = +res.data.message.total_task_count;
     const tasks = res.data.message.tasks as Task[];
@@ -26,7 +27,7 @@ class TasksRepository {
     form.append("text", payload.text);
 
     const res = await request({
-      url: "/create?developer=sayazhan",
+      url: `/create?developer=${config.apiDeveloper}`,
       method: "POST",
       data: form,
     });
@@ -41,7 +42,7 @@ class TasksRepository {
     form.append("status", String(payload.status));
 
     await request({
-      url: `/edit/${taskId}?developer=sayazhan`,
+      url: `/edit/${taskId}?developer=${config.apiDeveloper}`,
       method: "POST",
       data: form,
     });
@@ -54,7 +55,7 @@ class TasksRepository {
     form.append("status", String(payload.status));
 
     await request({
-      url: `/edit/${taskId}?developer=sayazhan`,
+      url: `/edit/${taskId}?developer=${config.apiDeveloper}`,
       method: "POST",
       data: form,
     });

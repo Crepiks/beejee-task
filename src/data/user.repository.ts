@@ -1,5 +1,6 @@
-import { LoginDto } from "../dto/login.dto";
 import request from "./request";
+import config from "../config";
+import { LoginDto } from "../dto/login.dto";
 
 const tokenKey = "token";
 
@@ -10,7 +11,7 @@ class UserRepository {
     form.append("password", payload.password);
 
     const res = await request({
-      url: "/login?developer=sayazhan",
+      url: `/login?developer=${config.apiDeveloper}`,
       method: "POST",
       data: form,
     });

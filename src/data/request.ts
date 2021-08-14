@@ -1,7 +1,8 @@
 import axios from "axios";
+import config from "../config";
 
 const instance = axios.create({
-  baseURL: "https://uxcandy.com/~shapoval/test-task-backend/v2",
+  baseURL: config.apiBaseUrl,
   headers: { "Content-Type": "multipart/form-data" },
 });
 
