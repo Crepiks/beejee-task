@@ -1,17 +1,17 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import TasksView from "./views/tasks.view";
-import LoginView from "./views/login.view";
+import Tasks from "./views/tasks";
+import Login from "./views/login";
 
 function App() {
   return (
     <Router>
       <Switch>
         <Route path="/" exact>
-          <TasksView />
+          <Tasks />
         </Route>
         <Route path="/login">
-          <LoginView />
+          <Login />
         </Route>
       </Switch>
     </Router>
