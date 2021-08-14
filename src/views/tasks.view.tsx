@@ -1,7 +1,12 @@
 import React from "react";
+import Header from "../components/header/header";
 
 function TasksView() {
-  return <div>Tasks view</div>;
+  return (
+    <div>
+      <Header />
+    </div>
+  );
 }
 
 export default TasksView;
