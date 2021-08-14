@@ -1,10 +1,27 @@
-import React from "react";
+import React, { FunctionComponent } from "react";
 import { Button } from "antd";
-import styles from "./header.module.css";
 import { useHistory } from "react-router-dom";
+import styles from "./header.module.css";
 
-function Header() {
+interface Props {
+  authenticated: boolean;
+  onLogout: () => void;
+}
+
+const Header: FunctionComponent<Props> = ({ authenticated, onLogout }) => {
   const history = useHistory();
+
+  function getLogoutButton() {
+    return <Button onClick={onLogout}>Log Out</Button>;
+  }
+
+  function getLoginButton() {
+    return (
+      <Button type="primary" onClick={handleLoginButtonClick}>
+        Log In
+      </Button>
+    );
+  }
 
   function handleLoginButtonClick() {
     history.push("/login");
@@ -13,11 +30,9 @@ function Header() {
   return (
     <div className={styles.header}>
       <span className={styles.logo}>BeeJee</span>
-      <Button type="primary" onClick={handleLoginButtonClick}>
-        Login
-      </Button>
+      {authenticated ? getLogoutButton() : getLoginButton()}
     </div>
   );
-}
+};
 
 export default Header;

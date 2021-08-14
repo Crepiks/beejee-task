@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Pagination, Select, Spin, notification } from "antd";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
@@ -8,14 +8,14 @@ import {
   setSortField,
   setSortOrder,
 } from "../store/features/tasks";
+import { setToken } from "../store/features/user";
+import { Task } from "../entities/task";
 import TasksRepository from "../data/tasks.repository";
 import Header from "../components/header/header";
 import TaskCard from "../components/task-card/task-card";
 import CreateTaskForm from "../components/create-task-form/create-task-form";
-import styles from "./tasks.module.css";
-import { useEffect } from "react";
-import { Task } from "../entities/task";
 import { CreateTaskDto } from "../dto/create-task.dto";
+import styles from "./tasks.module.css";
 
 type SortOrder = "asc" | "desc";
 
@@ -25,6 +25,7 @@ function TasksView() {
   const tasksPage = useAppSelector((state) => state.tasks.page);
   const sortField = useAppSelector((state) => state.tasks.sortField);
   const sortOrder = useAppSelector((state) => state.tasks.sortOrder);
+  const token = useAppSelector((state) => state.user.token);
   const dispatch = useAppDispatch();
   const [tasksLoading, setTasksLoading] = useState(false);
   const [createTaskFormLoading, setCreateTaskFormLoading] = useState(false);
@@ -97,9 +98,13 @@ function TasksView() {
     dispatch(setSortOrder(value));
   }
 
+  function clearToken() {
+    dispatch(setToken(""));
+  }
+
   return (
     <div className={styles.tasks}>
-      <Header />
+      <Header authenticated={Boolean(token)} onLogout={clearToken} />
       <div className={styles.tasksContent}>
         <div className={styles.tasksList}>
           <div>
