@@ -1,22 +1,13 @@
 .header {
   height: 80px;
-  padding: 0 40px;
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #c3c3c3;
+  background-color: white;
 }
 
 .logo {
   font-size: 24px;
   font-weight: 500;
-}
-
-.loginButton {
-  padding: 10px 20px;
-  color: white;
-  font-weight: 500;
-  text-decoration: none;
-  background-color: #2d2f2b;
-  border-radius: 10px;
 }
