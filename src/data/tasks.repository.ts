@@ -18,7 +18,7 @@ class TasksRepository {
   }
 
   static async create(payload: CreateTaskDto) {
-    var form = new FormData();
+    const form = new FormData();
     form.append("username", payload.username);
     form.append("email", payload.email);
     form.append("text", payload.text);
