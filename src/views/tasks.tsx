@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Pagination, Select, Spin, notification, Empty } from "antd";
+import { useHistory } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
   setTasksTotal,
@@ -10,13 +11,12 @@ import {
 } from "../store/features/tasks";
 import { Task } from "../entities/task";
 import TasksRepository from "../data/tasks.repository";
+import UserRepository from "../data/user.repository";
+import { CreateTaskDto } from "../dto/create-task.dto";
 import Header from "../components/header/header";
 import TaskCard from "../components/task-card/task-card";
 import CreateTaskForm from "../components/create-task-form/create-task-form";
-import { CreateTaskDto } from "../dto/create-task.dto";
 import styles from "./tasks.module.css";
-import UserRepository from "../data/user.repository";
-import { useHistory } from "react-router-dom";
 
 type SortOrder = "asc" | "desc";
 
