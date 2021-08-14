@@ -31,19 +31,25 @@ function TasksView() {
   const [createTaskFormLoading, setCreateTaskFormLoading] = useState(false);
 
   useEffect(() => {
-    fetchTasks();
+    fetchTasks(tasksPage, sortField, sortOrder);
   }, []);
 
-  async function fetchTasks(showLoadingIndicator: boolean = true) {
+  async function fetchTasks(
+    page: number,
+    sortField: string,
+    sortOrder: SortOrder,
+    showLoadingIndicator: boolean = true
+  ) {
     if (showLoadingIndicator) {
       setTasksLoading(true);
     }
 
     const data = await TasksRepository.findAll(
-      tasksPage,
+      page,
       sortField,
       sortOrder
     ).finally(() => setTasksLoading(false));
+
     updateTasksTotal(data.total);
     updateTasks(data.tasks);
   }
@@ -58,7 +64,7 @@ function TasksView() {
 
   function changePage(selectedPage: number) {
     updateTasksPage(selectedPage);
-    fetchTasks();
+    fetchTasks(selectedPage, sortField, sortOrder);
   }
 
   function updateTasksPage(page: number) {
@@ -69,7 +75,7 @@ function TasksView() {
     setCreateTaskFormLoading(true);
     return TasksRepository.create(payload)
       .then((task) => {
-        fetchTasks();
+        fetchTasks(tasksPage, sortField, sortOrder);
         showTaskCreatedNotification();
         return task;
       })
@@ -85,7 +91,7 @@ function TasksView() {
 
   function handleSortFieldChange(value: string) {
     updateSortField(value);
-    fetchTasks();
+    fetchTasks(tasksPage, value, sortOrder);
   }
 
   function updateSortField(value: string) {
@@ -94,7 +100,7 @@ function TasksView() {
 
   function handleSortOrderChange(value: SortOrder) {
     updateSortOrderChange(value);
-    fetchTasks();
+    fetchTasks(tasksPage, sortField, value);
   }
 
   function updateSortOrderChange(value: SortOrder) {
@@ -122,7 +128,7 @@ function TasksView() {
     const status = completed ? completedStatus : notCompletedStatus;
 
     await TasksRepository.updateStatus(taskId, { token, status });
-    await fetchTasks(false);
+    await fetchTasks(tasksPage, sortField, sortOrder, false);
   }
 
   return (
