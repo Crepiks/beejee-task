@@ -20,6 +20,13 @@ import { useHistory } from "react-router-dom";
 
 type SortOrder = "asc" | "desc";
 
+const statuses = {
+  notCompleted: 0,
+  notCompletedAndEditedByAdmin: 1,
+  completed: 10,
+  completedAndEditedByAdmin: 11,
+};
+
 function TasksView() {
   const tasks = useAppSelector((state) => state.tasks.data);
   const tasksTotal = useAppSelector((state) => state.tasks.total);
@@ -34,7 +41,7 @@ function TasksView() {
 
   useEffect(() => {
     fetchTasks(tasksPage, sortField, sortOrder);
-  }, []);
+  }, [tasksPage, sortField, sortOrder]);
 
   async function fetchTasks(
     page: number,
@@ -46,6 +53,8 @@ function TasksView() {
       setTasksLoading(true);
     }
 
+    console.log("Moving page ", page);
+    console.log("Sorting by ", sortField, sortOrder);
     const data = await TasksRepository.findAll(
       page,
       sortField,
@@ -66,7 +75,6 @@ function TasksView() {
 
   function changePage(selectedPage: number) {
     updateTasksPage(selectedPage);
-    fetchTasks(selectedPage, sortField, sortOrder);
   }
 
   function updateTasksPage(page: number) {
@@ -93,7 +101,6 @@ function TasksView() {
 
   function handleSortFieldChange(value: string) {
     updateSortField(value);
-    fetchTasks(tasksPage, value, sortOrder);
   }
 
   function updateSortField(value: string) {
@@ -102,7 +109,6 @@ function TasksView() {
 
   function handleSortOrderChange(value: SortOrder) {
     updateSortOrderChange(value);
-    fetchTasks(tasksPage, sortField, value);
   }
 
   function updateSortOrderChange(value: SortOrder) {
@@ -110,19 +116,17 @@ function TasksView() {
   }
 
   function getTaskCompleted(status: number): boolean {
-    if (status === 10 || status === 11) {
-      return true;
-    }
-
-    return false;
+    return (
+      status === statuses.completed ||
+      status === statuses.completedAndEditedByAdmin
+    );
   }
 
   function getEditByAdmin(status: number): boolean {
-    if (status === 1 || status === 11) {
-      return true;
-    }
-
-    return false;
+    return (
+      status === statuses.notCompletedAndEditedByAdmin ||
+      status === statuses.completedAndEditedByAdmin
+    );
   }
 
   async function updateTaskStatus(
@@ -130,14 +134,14 @@ function TasksView() {
     status: number
   ): Promise<void> {
     let updatedStatus = status;
-    if (status === 0) {
-      updatedStatus = 10;
-    } else if (status === 10) {
-      updatedStatus = 0;
-    } else if (status === 1) {
-      updatedStatus = 11;
+    if (status === statuses.completed) {
+      updatedStatus = statuses.notCompleted;
+    } else if (status === statuses.notCompleted) {
+      updatedStatus = statuses.completed;
+    } else if (status === statuses.notCompletedAndEditedByAdmin) {
+      updatedStatus = statuses.completedAndEditedByAdmin;
     } else {
-      updatedStatus = 1;
+      updatedStatus = statuses.notCompletedAndEditedByAdmin;
     }
 
     const token = UserRepository.getToken();
@@ -158,10 +162,10 @@ function TasksView() {
     text: string
   ): Promise<void> {
     let updatedStatus = status;
-    if (status === 10) {
-      updatedStatus = 11;
-    } else if (status === 0) {
-      updatedStatus = 1;
+    if (status === statuses.completed) {
+      updatedStatus = statuses.completedAndEditedByAdmin;
+    } else if (status === statuses.notCompleted) {
+      updatedStatus = statuses.notCompletedAndEditedByAdmin;
     }
 
     const token = UserRepository.getToken();
