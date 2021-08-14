@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Pagination } from "antd";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { setTasksTotal, setTasks, setTasksPage } from "../store/features/tasks";
@@ -9,12 +9,14 @@ import CreateTaskForm from "../components/create-task-form/create-task-form";
 import styles from "./tasks.module.css";
 import { useEffect } from "react";
 import { Task } from "../entities/task";
+import { CreateTaskDto } from "../dto/create-task";
 
 function TasksView() {
   const tasks = useAppSelector((state) => state.tasks.data);
   const tasksTotal = useAppSelector((state) => state.tasks.total);
   const tasksPage = useAppSelector((state) => state.tasks.page);
   const dispatch = useAppDispatch();
+  const [createTaskFormLoading, setCreateTaskFormLoading] = useState(false);
 
   useEffect(() => {
     fetchTasks(tasksPage);
@@ -43,6 +45,16 @@ function TasksView() {
     dispatch(setTasksPage(page));
   }
 
+  function createTask(payload: CreateTaskDto): Promise<Task> {
+    setCreateTaskFormLoading(true);
+    return TasksRepository.create(payload)
+      .then((task) => {
+        fetchTasks(tasksPage);
+        return task;
+      })
+      .finally(() => setCreateTaskFormLoading(false));
+  }
+
   return (
     <div className={styles.tasks}>
       <Header />
@@ -67,7 +79,10 @@ function TasksView() {
           </div>
         </div>
         <div>
-          <CreateTaskForm />
+          <CreateTaskForm
+            loading={createTaskFormLoading}
+            onSubmit={createTask}
+          />
         </div>
       </div>
     </div>
