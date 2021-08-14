@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Pagination, Select, Spin, notification } from "antd";
+import { Pagination, Select, Spin, notification, Empty } from "antd";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
   setTasksTotal,
@@ -53,8 +53,6 @@ function TasksView() {
       setTasksLoading(true);
     }
 
-    console.log("Moving page ", page);
-    console.log("Sorting by ", sortField, sortOrder);
     const data = await TasksRepository.findAll(
       page,
       sortField,
@@ -190,6 +188,51 @@ function TasksView() {
     setToken("");
   }
 
+  function getTaskListContent() {
+    if (tasksLoading) {
+      return getLoadingIndicator();
+    } else if (!tasks.length) {
+      return getEmpty();
+    }
+
+    return getTasks();
+  }
+
+  function getLoadingIndicator() {
+    return (
+      <div className={styles.spinWrapper}>
+        <Spin />
+      </div>
+    );
+  }
+
+  function getEmpty() {
+    return (
+      <div className={styles.emptyWrapper}>
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      </div>
+    );
+  }
+
+  function getTasks() {
+    return tasks.map((task) => (
+      <div key={task.id} className={styles.taskCard}>
+        <TaskCard
+          email={task.email}
+          username={task.username}
+          text={task.text}
+          completed={getTaskCompleted(task.status)}
+          editedByAdmin={getEditByAdmin(task.status)}
+          updateEnabled={Boolean(token)}
+          onStatusUpdate={() => updateTaskStatus(task.id, task.status)}
+          onTextUpdate={(text: string) =>
+            updateTaskText(task.id, task.status, text)
+          }
+        />
+      </div>
+    ));
+  }
+
   return (
     <div className={styles.tasks}>
       <Header authenticated={Boolean(token)} onLogout={logout} />
@@ -215,36 +258,17 @@ function TasksView() {
               <Select.Option value="desc">Descending</Select.Option>
             </Select>
           </div>
-          {tasksLoading ? (
-            <div className={styles.spinWrapper}>
-              <Spin />
+          {getTaskListContent()}
+          {tasks.length !== 0 && (
+            <div className={styles.paginationWrapper}>
+              <Pagination
+                current={tasksPage}
+                pageSize={3}
+                total={tasksTotal}
+                onChange={changePage}
+              />
             </div>
-          ) : (
-            tasks.map((task) => (
-              <div key={task.id} className={styles.taskCard}>
-                <TaskCard
-                  email={task.email}
-                  username={task.username}
-                  text={task.text}
-                  completed={getTaskCompleted(task.status)}
-                  editedByAdmin={getEditByAdmin(task.status)}
-                  updateEnabled={Boolean(token)}
-                  onStatusUpdate={() => updateTaskStatus(task.id, task.status)}
-                  onTextUpdate={(text: string) =>
-                    updateTaskText(task.id, task.status, text)
-                  }
-                />
-              </div>
-            ))
           )}
-          <div className={styles.paginationWrapper}>
-            <Pagination
-              current={tasksPage}
-              pageSize={3}
-              total={tasksTotal}
-              onChange={changePage}
-            />
-          </div>
         </div>
         <div>
           <CreateTaskForm

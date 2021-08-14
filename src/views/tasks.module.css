@@ -13,6 +13,11 @@
   margin-bottom: 20px;
 }
 
+.emptyWrapper {
+  padding: 40px 0;
+  background-color: white;
+}
+
 .taskCard {
   margin-bottom: 20px;
 }
