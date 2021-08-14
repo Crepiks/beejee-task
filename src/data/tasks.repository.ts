@@ -3,8 +3,14 @@ import { Task } from "../entities/task";
 import request from "./request";
 
 class TasksRepository {
-  static async findAll(page: number) {
-    const res = await request.get(`?developer=sayazhan&page=${page}`);
+  static async findAll(
+    page: number,
+    sortField: string,
+    sortOrder: "asc" | "desc"
+  ) {
+    const res = await request.get(
+      `?developer=sayazhan&page=${page}&sort_field=${sortField}&sort_direction=${sortOrder}`
+    );
     const total = +res.data.message.total_task_count;
     const tasks = res.data.message.tasks as Task[];
 

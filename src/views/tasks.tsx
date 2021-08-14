@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { Pagination, Spin } from "antd";
+import { Pagination, Select, Spin } from "antd";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
-import { setTasksTotal, setTasks, setTasksPage } from "../store/features/tasks";
+import {
+  setTasksTotal,
+  setTasks,
+  setTasksPage,
+  setSortField,
+  setSortOrder,
+} from "../store/features/tasks";
 import TasksRepository from "../data/tasks.repository";
 import Header from "../components/header/header";
 import TaskCard from "../components/task-card/task-card";
@@ -11,23 +17,29 @@ import { useEffect } from "react";
 import { Task } from "../entities/task";
 import { CreateTaskDto } from "../dto/create-task";
 
+type SortOrder = "asc" | "desc";
+
 function TasksView() {
   const tasks = useAppSelector((state) => state.tasks.data);
   const tasksTotal = useAppSelector((state) => state.tasks.total);
   const tasksPage = useAppSelector((state) => state.tasks.page);
+  const sortField = useAppSelector((state) => state.tasks.sortField);
+  const sortOrder = useAppSelector((state) => state.tasks.sortOrder);
   const dispatch = useAppDispatch();
   const [tasksLoading, setTasksLoading] = useState(false);
   const [createTaskFormLoading, setCreateTaskFormLoading] = useState(false);
 
   useEffect(() => {
-    fetchTasks(tasksPage);
+    fetchTasks();
   }, []);
 
-  async function fetchTasks(page: number) {
+  async function fetchTasks() {
     setTasksLoading(true);
-    const data = await TasksRepository.findAll(page).finally(() =>
-      setTasksLoading(false)
-    );
+    const data = await TasksRepository.findAll(
+      tasksPage,
+      sortField,
+      sortOrder
+    ).finally(() => setTasksLoading(false));
     updateTasksTotal(data.total);
     updateTasks(data.tasks);
   }
@@ -42,7 +54,7 @@ function TasksView() {
 
   function changePage(selectedPage: number) {
     updateTasksPage(selectedPage);
-    fetchTasks(selectedPage);
+    fetchTasks();
   }
 
   function updateTasksPage(page: number) {
@@ -53,10 +65,28 @@ function TasksView() {
     setCreateTaskFormLoading(true);
     return TasksRepository.create(payload)
       .then((task) => {
-        fetchTasks(tasksPage);
+        fetchTasks();
         return task;
       })
       .finally(() => setCreateTaskFormLoading(false));
+  }
+
+  function handleSortFieldChange(value: string) {
+    updateSortField(value);
+    fetchTasks();
+  }
+
+  function updateSortField(value: string) {
+    dispatch(setSortField(value));
+  }
+
+  function handleSortOrderChange(value: SortOrder) {
+    updateSortOrderChange(value);
+    fetchTasks();
+  }
+
+  function updateSortOrderChange(value: SortOrder) {
+    dispatch(setSortOrder(value));
   }
 
   return (
@@ -64,6 +94,26 @@ function TasksView() {
       <Header />
       <div className={styles.tasksContent}>
         <div className={styles.tasksList}>
+          <div>
+            <Select
+              value={sortField}
+              style={{ width: 140 }}
+              onChange={handleSortFieldChange}
+            >
+              <Select.Option value="id">ID</Select.Option>
+              <Select.Option value="email">Email</Select.Option>
+              <Select.Option value="username">Username</Select.Option>
+              <Select.Option value="status">Status</Select.Option>
+            </Select>
+            <Select
+              value={sortOrder}
+              style={{ width: 160, marginLeft: 20 }}
+              onChange={handleSortOrderChange}
+            >
+              <Select.Option value="asc">Ascending</Select.Option>
+              <Select.Option value="desc">Descending</Select.Option>
+            </Select>
+          </div>
           {tasksLoading ? (
             <div className={styles.spinWrapper}>
               <Spin />
