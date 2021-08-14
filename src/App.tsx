@@ -1,11 +1,20 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import TasksView from "./views/tasks.view";
+import LoginView from "./views/login.view";
 
 function App() {
   return (
-    <div className="App">
-      This is App
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/" exact>
+          <TasksView />
+        </Route>
+        <Route path="/login">
+          <LoginView />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
