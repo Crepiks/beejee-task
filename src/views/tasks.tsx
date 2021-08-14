@@ -119,6 +119,14 @@ function TasksView() {
     return false;
   }
 
+  function getEditByAdmin(status: number): boolean {
+    if (status === 1 || status === 11) {
+      return true;
+    }
+
+    return false;
+  }
+
   async function updateTaskStatus(
     taskId: number,
     completed: boolean
@@ -169,6 +177,7 @@ function TasksView() {
                   username={task.username}
                   text={task.text}
                   completed={getTaskCompleted(task.status)}
+                  editedByAdmin={getEditByAdmin(task.status)}
                   statusUpdateEnabled={Boolean(token)}
                   onStatusUpdate={(completed: boolean) =>
                     updateTaskStatus(task.id, completed)

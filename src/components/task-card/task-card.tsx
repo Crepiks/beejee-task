@@ -8,6 +8,7 @@ interface Props {
   username: string;
   text: string;
   completed: boolean;
+  editedByAdmin: boolean;
   statusUpdateEnabled: boolean;
   onStatusUpdate: (completed: boolean) => Promise<void>;
 }
@@ -17,6 +18,7 @@ const TaskCard: FunctionComponent<Props> = ({
   username,
   text,
   completed,
+  editedByAdmin,
   statusUpdateEnabled,
   onStatusUpdate,
 }) => {
@@ -60,7 +62,12 @@ const TaskCard: FunctionComponent<Props> = ({
     <article className={styles.card}>
       <div className={styles.header}>
         <span className={styles.email}>{email}</span>
-        {statusUpdateEnabled ? getStatusUpdateButton() : getCompletedTag()}
+        <div>
+          {statusUpdateEnabled ? getStatusUpdateButton() : getCompletedTag()}
+          {!statusUpdateEnabled && editedByAdmin && (
+            <Tag color="yellow">Edited by Admin</Tag>
+          )}
+        </div>
       </div>
       <h3 className={styles.name}>{username}</h3>
       <p className={styles.text}>{text}</p>
