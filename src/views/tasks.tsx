@@ -15,7 +15,7 @@ import CreateTaskForm from "../components/create-task-form/create-task-form";
 import styles from "./tasks.module.css";
 import { useEffect } from "react";
 import { Task } from "../entities/task";
-import { CreateTaskDto } from "../dto/create-task";
+import { CreateTaskDto } from "../dto/create-task.dto";
 
 type SortOrder = "asc" | "desc";
 

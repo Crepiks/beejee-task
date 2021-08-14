@@ -1,4 +1,4 @@
-import { CreateTaskDto } from "../dto/create-task";
+import { CreateTaskDto } from "../dto/create-task.dto";
 import { Task } from "../entities/task";
 import request from "./request";
 

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { Form, Input, Button } from "antd";
 import styles from "./create-task-form.module.css";
-import { CreateTaskDto } from "../../dto/create-task";
+import { CreateTaskDto } from "../../dto/create-task.dto";
 import { Task } from "../../entities/task";
 
 interface Props {
