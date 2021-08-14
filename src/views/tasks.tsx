@@ -8,7 +8,6 @@ import {
   setSortField,
   setSortOrder,
 } from "../store/features/tasks";
-import { setToken } from "../store/features/user";
 import { Task } from "../entities/task";
 import TasksRepository from "../data/tasks.repository";
 import Header from "../components/header/header";
@@ -16,6 +15,8 @@ import TaskCard from "../components/task-card/task-card";
 import CreateTaskForm from "../components/create-task-form/create-task-form";
 import { CreateTaskDto } from "../dto/create-task.dto";
 import styles from "./tasks.module.css";
+import UserRepository from "../data/user.repository";
+import { useHistory } from "react-router-dom";
 
 type SortOrder = "asc" | "desc";
 
@@ -25,10 +26,11 @@ function TasksView() {
   const tasksPage = useAppSelector((state) => state.tasks.page);
   const sortField = useAppSelector((state) => state.tasks.sortField);
   const sortOrder = useAppSelector((state) => state.tasks.sortOrder);
-  const token = useAppSelector((state) => state.user.token);
   const dispatch = useAppDispatch();
   const [tasksLoading, setTasksLoading] = useState(false);
   const [createTaskFormLoading, setCreateTaskFormLoading] = useState(false);
+  const history = useHistory();
+  const [token, setToken] = useState(UserRepository.getToken());
 
   useEffect(() => {
     fetchTasks(tasksPage, sortField, sortOrder);
@@ -107,10 +109,6 @@ function TasksView() {
     dispatch(setSortOrder(value));
   }
 
-  function clearToken() {
-    dispatch(setToken(""));
-  }
-
   function getTaskCompleted(status: number): boolean {
     if (status === 10 || status === 11) {
       return true;
@@ -142,6 +140,11 @@ function TasksView() {
       updatedStatus = 1;
     }
 
+    const token = UserRepository.getToken();
+    if (!token) {
+      navigateToLoginPage();
+    }
+
     await TasksRepository.updateStatus(taskId, {
       token,
       status: updatedStatus,
@@ -161,6 +164,11 @@ function TasksView() {
       updatedStatus = 1;
     }
 
+    const token = UserRepository.getToken();
+    if (!token) {
+      navigateToLoginPage();
+    }
+
     await TasksRepository.updateText(taskId, {
       token,
       status: updatedStatus,
@@ -169,9 +177,18 @@ function TasksView() {
     await fetchTasks(tasksPage, sortField, sortOrder, false);
   }
 
+  function navigateToLoginPage() {
+    history.push("/login");
+  }
+
+  function logout() {
+    UserRepository.clearToken();
+    setToken("");
+  }
+
   return (
     <div className={styles.tasks}>
-      <Header authenticated={Boolean(token)} onLogout={clearToken} />
+      <Header authenticated={Boolean(token)} onLogout={logout} />
       <div className={styles.tasksContent}>
         <div className={styles.tasksList}>
           <div className={styles.filters}>

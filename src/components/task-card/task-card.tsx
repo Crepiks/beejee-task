@@ -67,12 +67,16 @@ const TaskCard: FunctionComponent<Props> = ({
 
   function getTextEditForm() {
     return (
-      <Form layout="vertical" onFinish={handleTextUpdate}>
+      <Form
+        initialValues={{ text }}
+        layout="vertical"
+        onFinish={handleTextUpdate}
+      >
         <Form.Item
           name="text"
           rules={[{ required: true, message: "Please input text" }]}
         >
-          <Input.TextArea defaultValue={text} rows={4} />
+          <Input.TextArea rows={4} />
         </Form.Item>
         <div className={styles.submitWrapper}>
           <Button loading={textLoading} type="primary" htmlType="submit">

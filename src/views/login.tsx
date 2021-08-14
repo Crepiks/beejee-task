@@ -1,15 +1,12 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { notification } from "antd";
-import { useAppDispatch } from "../store/hooks";
 import LoginForm from "../components/login-form/login-form";
 import { LoginDto } from "../dto/login.dto";
 import styles from "./login.module.css";
 import UserRepository from "../data/user.repository";
-import { setToken } from "../store/features/user";
 
 function LoginView() {
-  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const history = useHistory();
 
@@ -19,15 +16,11 @@ function LoginView() {
     const token = await UserRepository.login(payload);
     setLoading(false);
     if (token) {
-      updateToken(token);
+      UserRepository.setToken(token);
       navigateToTasksPage();
     } else {
       showErrorNotification();
     }
-  }
-
-  function updateToken(token: string) {
-    dispatch(setToken(token));
   }
 
   function navigateToTasksPage() {

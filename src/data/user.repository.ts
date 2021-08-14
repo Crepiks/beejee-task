@@ -1,6 +1,8 @@
 import { LoginDto } from "../dto/login.dto";
 import request from "./request";
 
+const tokenKey = "token";
+
 class UserRepository {
   static async login(payload: LoginDto): Promise<string> {
     const form = new FormData();
@@ -14,6 +16,18 @@ class UserRepository {
     });
 
     return res.data.message.token;
+  }
+
+  static getToken(): string {
+    return localStorage.getItem(tokenKey) || "";
+  }
+
+  static setToken(token: string) {
+    localStorage.setItem(tokenKey, token);
+  }
+
+  static clearToken() {
+    localStorage.removeItem(tokenKey);
   }
 }
 
