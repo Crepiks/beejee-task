@@ -1,6 +1,7 @@
-import { CreateTaskDto } from "../dto/create-task.dto";
-import { Task } from "../entities/task";
 import request from "./request";
+import { Task } from "../entities/task";
+import { CreateTaskDto } from "../dto/create-task.dto";
+import { UpdateTaskStatusDto } from "../dto/update-task-status.dto";
 
 class TasksRepository {
   static async findAll(
@@ -31,6 +32,18 @@ class TasksRepository {
     const task = res.data.message as Task;
 
     return task;
+  }
+
+  static async updateStatus(taskId: number, payload: UpdateTaskStatusDto) {
+    const form = new FormData();
+    form.append("token", payload.token);
+    form.append("status", String(payload.status));
+
+    await request({
+      url: `/edit/${taskId}?developer=sayazhan`,
+      method: "POST",
+      data: form,
+    });
   }
 }
 
