@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Pagination, Select, Spin } from "antd";
+import { Pagination, Select, Spin, notification } from "antd";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
   setTasksTotal,
@@ -66,9 +66,17 @@ function TasksView() {
     return TasksRepository.create(payload)
       .then((task) => {
         fetchTasks();
+        showTaskCreatedNotification();
         return task;
       })
       .finally(() => setCreateTaskFormLoading(false));
+  }
+
+  function showTaskCreatedNotification() {
+    notification.success({
+      message: "Task created",
+      description: "The task has been successfully created",
+    });
   }
 
   function handleSortFieldChange(value: string) {

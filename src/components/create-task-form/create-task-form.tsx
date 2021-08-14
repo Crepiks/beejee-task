@@ -23,7 +23,13 @@ const CreateTaskForm: FunctionComponent<Props> = ({ loading, onSubmit }) => {
         <Form.Item
           label="Email"
           name="email"
-          rules={[{ required: true, message: "Please input email" }]}
+          rules={[
+            {
+              required: true,
+              type: "email",
+              message: "Please input valid email",
+            },
+          ]}
         >
           <Input />
         </Form.Item>
