@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Pagination } from "antd";
+import { Pagination, Spin } from "antd";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { setTasksTotal, setTasks, setTasksPage } from "../store/features/tasks";
 import TasksRepository from "../data/tasks.repository";
@@ -16,6 +16,7 @@ function TasksView() {
   const tasksTotal = useAppSelector((state) => state.tasks.total);
   const tasksPage = useAppSelector((state) => state.tasks.page);
   const dispatch = useAppDispatch();
+  const [tasksLoading, setTasksLoading] = useState(false);
   const [createTaskFormLoading, setCreateTaskFormLoading] = useState(false);
 
   useEffect(() => {
@@ -23,7 +24,10 @@ function TasksView() {
   }, []);
 
   async function fetchTasks(page: number) {
-    const data = await TasksRepository.findAll(page);
+    setTasksLoading(true);
+    const data = await TasksRepository.findAll(page).finally(() =>
+      setTasksLoading(false)
+    );
     updateTasksTotal(data.total);
     updateTasks(data.tasks);
   }
@@ -60,15 +64,21 @@ function TasksView() {
       <Header />
       <div className={styles.tasksContent}>
         <div className={styles.tasksList}>
-          {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              email={task.email}
-              username={task.username}
-              text={task.text}
-              status={task.status}
-            />
-          ))}
+          {tasksLoading ? (
+            <div className={styles.spinWrapper}>
+              <Spin />
+            </div>
+          ) : (
+            tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                email={task.email}
+                username={task.username}
+                text={task.text}
+                status={task.status}
+              />
+            ))
+          )}
           <div className={styles.paginationWrapper}>
             <Pagination
               current={tasksPage}
