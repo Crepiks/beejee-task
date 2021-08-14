@@ -129,13 +129,23 @@ function TasksView() {
 
   async function updateTaskStatus(
     taskId: number,
-    completed: boolean
+    status: number
   ): Promise<void> {
-    const completedStatus = 11;
-    const notCompletedStatus = 1;
-    const status = completed ? completedStatus : notCompletedStatus;
+    let updatedStatus = status;
+    if (status === 0) {
+      updatedStatus = 10;
+    } else if (status === 10) {
+      updatedStatus = 0;
+    } else if (status === 1) {
+      updatedStatus = 11;
+    } else {
+      updatedStatus = 1;
+    }
 
-    await TasksRepository.updateStatus(taskId, { token, status });
+    await TasksRepository.updateStatus(taskId, {
+      token,
+      status: updatedStatus,
+    });
     await fetchTasks(tasksPage, sortField, sortOrder, false);
   }
 
@@ -199,9 +209,7 @@ function TasksView() {
                   completed={getTaskCompleted(task.status)}
                   editedByAdmin={getEditByAdmin(task.status)}
                   updateEnabled={Boolean(token)}
-                  onStatusUpdate={(completed: boolean) =>
-                    updateTaskStatus(task.id, completed)
-                  }
+                  onStatusUpdate={() => updateTaskStatus(task.id, task.status)}
                   onTextUpdate={(text: string) =>
                     updateTaskText(task.id, task.status, text)
                   }

@@ -10,7 +10,7 @@ interface Props {
   completed: boolean;
   editedByAdmin: boolean;
   updateEnabled: boolean;
-  onStatusUpdate: (completed: boolean) => Promise<void>;
+  onStatusUpdate: () => Promise<void>;
   onTextUpdate: (text: string) => Promise<void>;
 }
 
@@ -32,7 +32,7 @@ const TaskCard: FunctionComponent<Props> = ({
       <Button
         loading={statusLoading}
         type="primary"
-        onClick={() => handleStatusUpdate(false)}
+        onClick={handleStatusUpdate}
       >
         Completed
       </Button>
@@ -41,16 +41,16 @@ const TaskCard: FunctionComponent<Props> = ({
         loading={statusLoading}
         type="primary"
         danger
-        onClick={() => handleStatusUpdate(true)}
+        onClick={handleStatusUpdate}
       >
         Not Completed
       </Button>
     );
   }
 
-  function handleStatusUpdate(completed: boolean) {
+  function handleStatusUpdate() {
     setStatusLoading(true);
-    onStatusUpdate(completed).then(() => setStatusLoading(false));
+    onStatusUpdate().then(() => setStatusLoading(false));
   }
 
   function getCompletedTag() {
