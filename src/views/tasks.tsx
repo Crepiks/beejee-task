@@ -217,9 +217,8 @@ function TasksView() {
             </div>
           ) : (
             tasks.map((task) => (
-              <div className={styles.taskCard}>
+              <div key={task.id} className={styles.taskCard}>
                 <TaskCard
-                  key={task.id}
                   email={task.email}
                   username={task.username}
                   text={task.text}
