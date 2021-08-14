@@ -3,6 +3,11 @@
   background-color: white;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .name {
   margin: 10px 0 20px;
   font-size: 26px;

@@ -102,6 +102,14 @@ function TasksView() {
     dispatch(setToken(""));
   }
 
+  function getTaskCompleted(status: number): boolean {
+    if (status === 10 || status === 11) {
+      return true;
+    }
+
+    return false;
+  }
+
   return (
     <div className={styles.tasks}>
       <Header authenticated={Boolean(token)} onLogout={clearToken} />
@@ -138,7 +146,7 @@ function TasksView() {
                 email={task.email}
                 username={task.username}
                 text={task.text}
-                status={task.status}
+                completed={getTaskCompleted(task.status)}
               />
             ))
           )}
