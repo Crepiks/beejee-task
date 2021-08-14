@@ -2,6 +2,7 @@ import request from "./request";
 import { Task } from "../entities/task";
 import { CreateTaskDto } from "../dto/create-task.dto";
 import { UpdateTaskStatusDto } from "../dto/update-task-status.dto";
+import { UpdateTaskTextDto } from "../dto/update-task-text.dto";
 
 class TasksRepository {
   static async findAll(
@@ -37,6 +38,19 @@ class TasksRepository {
   static async updateStatus(taskId: number, payload: UpdateTaskStatusDto) {
     const form = new FormData();
     form.append("token", payload.token);
+    form.append("status", String(payload.status));
+
+    await request({
+      url: `/edit/${taskId}?developer=sayazhan`,
+      method: "POST",
+      data: form,
+    });
+  }
+
+  static async updateText(taskId: number, payload: UpdateTaskTextDto) {
+    const form = new FormData();
+    form.append("token", payload.token);
+    form.append("text", payload.text);
     form.append("status", String(payload.status));
 
     await request({

@@ -1,5 +1,6 @@
 .tasksContent {
   margin: 20px 20px 0;
+  padding-bottom: 40px;
   display: grid;
   grid-template-columns: 60% 40%;
 }

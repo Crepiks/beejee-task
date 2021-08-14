@@ -139,6 +139,26 @@ function TasksView() {
     await fetchTasks(tasksPage, sortField, sortOrder, false);
   }
 
+  async function updateTaskText(
+    taskId: number,
+    status: number,
+    text: string
+  ): Promise<void> {
+    let updatedStatus = status;
+    if (status === 10) {
+      updatedStatus = 11;
+    } else if (status === 0) {
+      updatedStatus = 1;
+    }
+
+    await TasksRepository.updateText(taskId, {
+      token,
+      status: updatedStatus,
+      text,
+    });
+    await fetchTasks(tasksPage, sortField, sortOrder, false);
+  }
+
   return (
     <div className={styles.tasks}>
       <Header authenticated={Boolean(token)} onLogout={clearToken} />
@@ -178,9 +198,12 @@ function TasksView() {
                   text={task.text}
                   completed={getTaskCompleted(task.status)}
                   editedByAdmin={getEditByAdmin(task.status)}
-                  statusUpdateEnabled={Boolean(token)}
+                  updateEnabled={Boolean(token)}
                   onStatusUpdate={(completed: boolean) =>
                     updateTaskStatus(task.id, completed)
+                  }
+                  onTextUpdate={(text: string) =>
+                    updateTaskText(task.id, task.status, text)
                   }
                 />
               </div>

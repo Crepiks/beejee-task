@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Button, Tag } from "antd";
+import { Button, Form, Tag, Input } from "antd";
 import styles from "./task-card.module.css";
 import { useState } from "react";
 
@@ -9,8 +9,9 @@ interface Props {
   text: string;
   completed: boolean;
   editedByAdmin: boolean;
-  statusUpdateEnabled: boolean;
+  updateEnabled: boolean;
   onStatusUpdate: (completed: boolean) => Promise<void>;
+  onTextUpdate: (text: string) => Promise<void>;
 }
 
 const TaskCard: FunctionComponent<Props> = ({
@@ -19,15 +20,17 @@ const TaskCard: FunctionComponent<Props> = ({
   text,
   completed,
   editedByAdmin,
-  statusUpdateEnabled,
+  updateEnabled,
   onStatusUpdate,
+  onTextUpdate,
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [textLoading, setTextLoading] = useState(false);
 
   function getStatusUpdateButton() {
     return completed ? (
       <Button
-        loading={loading}
+        loading={statusLoading}
         type="primary"
         onClick={() => handleStatusUpdate(false)}
       >
@@ -35,7 +38,7 @@ const TaskCard: FunctionComponent<Props> = ({
       </Button>
     ) : (
       <Button
-        loading={loading}
+        loading={statusLoading}
         type="primary"
         danger
         onClick={() => handleStatusUpdate(true)}
@@ -46,8 +49,8 @@ const TaskCard: FunctionComponent<Props> = ({
   }
 
   function handleStatusUpdate(completed: boolean) {
-    setLoading(true);
-    onStatusUpdate(completed).then(() => setLoading(false));
+    setStatusLoading(true);
+    onStatusUpdate(completed).then(() => setStatusLoading(false));
   }
 
   function getCompletedTag() {
@@ -58,19 +61,46 @@ const TaskCard: FunctionComponent<Props> = ({
     );
   }
 
+  function getTaskText() {
+    return <p className={styles.text}>{text}</p>;
+  }
+
+  function getTextEditForm() {
+    return (
+      <Form layout="vertical" onFinish={handleTextUpdate}>
+        <Form.Item
+          name="text"
+          rules={[{ required: true, message: "Please input text" }]}
+        >
+          <Input.TextArea defaultValue={text} rows={4} />
+        </Form.Item>
+        <div className={styles.submitWrapper}>
+          <Button loading={textLoading} type="primary" htmlType="submit">
+            Save
+          </Button>
+        </div>
+      </Form>
+    );
+  }
+
+  function handleTextUpdate({ text }: { text: string }) {
+    setTextLoading(true);
+    onTextUpdate(text).finally(() => setTextLoading(false));
+  }
+
   return (
     <article className={styles.card}>
       <div className={styles.header}>
         <span className={styles.email}>{email}</span>
         <div>
-          {statusUpdateEnabled ? getStatusUpdateButton() : getCompletedTag()}
-          {!statusUpdateEnabled && editedByAdmin && (
+          {updateEnabled ? getStatusUpdateButton() : getCompletedTag()}
+          {!updateEnabled && editedByAdmin && (
             <Tag color="yellow">Edited by Admin</Tag>
           )}
         </div>
       </div>
       <h3 className={styles.name}>{username}</h3>
-      <p className={styles.text}>{text}</p>
+      {updateEnabled ? getTextEditForm() : getTaskText()}
     </article>
   );
 };
