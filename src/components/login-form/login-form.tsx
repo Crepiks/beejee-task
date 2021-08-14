@@ -28,7 +28,7 @@ const LoginForm: FunctionComponent<Props> = ({ loading, onSubmit }) => {
         name="password"
         rules={[{ required: true, message: "Please input password" }]}
       >
-        <Input />
+        <Input type="password" />
       </Form.Item>
       <div className={styles.submitWrapper}>
         <Button loading={loading} type="primary" size="large" htmlType="submit">
