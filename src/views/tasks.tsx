@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../components/header/header";
 import TaskCard from "../components/task-card/task-card";
+import CreateTaskForm from "../components/create-task-form/create-task-form";
 import styles from "./tasks.module.css";
 
 function TasksView() {
@@ -31,7 +32,9 @@ function TasksView() {
             status={10}
           />
         </div>
-        <div>This is form</div>
+        <div>
+          <CreateTaskForm />
+        </div>
       </div>
     </div>
   );
