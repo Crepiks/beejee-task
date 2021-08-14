@@ -136,7 +136,7 @@ function TasksView() {
       <Header authenticated={Boolean(token)} onLogout={clearToken} />
       <div className={styles.tasksContent}>
         <div className={styles.tasksList}>
-          <div>
+          <div className={styles.filters}>
             <Select
               value={sortField}
               style={{ width: 140 }}
@@ -162,17 +162,19 @@ function TasksView() {
             </div>
           ) : (
             tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                email={task.email}
-                username={task.username}
-                text={task.text}
-                completed={getTaskCompleted(task.status)}
-                statusUpdateEnabled={Boolean(token)}
-                onStatusUpdate={(completed: boolean) =>
-                  updateTaskStatus(task.id, completed)
-                }
-              />
+              <div className={styles.taskCard}>
+                <TaskCard
+                  key={task.id}
+                  email={task.email}
+                  username={task.username}
+                  text={task.text}
+                  completed={getTaskCompleted(task.status)}
+                  statusUpdateEnabled={Boolean(token)}
+                  onStatusUpdate={(completed: boolean) =>
+                    updateTaskStatus(task.id, completed)
+                  }
+                />
+              </div>
             ))
           )}
           <div className={styles.paginationWrapper}>
