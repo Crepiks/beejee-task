@@ -1,6 +1,6 @@
 const config = {
   apiBaseUrl: "https://uxcandy.com/~shapoval/test-task-backend/v2",
-  apiDeveloper: "sayazhan1",
+  apiDeveloper: "sayazhan11",
 };
 
 export default config;
