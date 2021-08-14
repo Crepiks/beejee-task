@@ -1,4 +1,4 @@
 export class UpdateTaskStatusDto {
-  token: string;
-  status: number;
+  token: string = "";
+  status: number = 0;
 }

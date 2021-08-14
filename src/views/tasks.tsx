@@ -34,8 +34,11 @@ function TasksView() {
     fetchTasks();
   }, []);
 
-  async function fetchTasks() {
-    setTasksLoading(true);
+  async function fetchTasks(showLoadingIndicator: boolean = true) {
+    if (showLoadingIndicator) {
+      setTasksLoading(true);
+    }
+
     const data = await TasksRepository.findAll(
       tasksPage,
       sortField,
@@ -110,6 +113,18 @@ function TasksView() {
     return false;
   }
 
+  async function updateTaskStatus(
+    taskId: number,
+    completed: boolean
+  ): Promise<void> {
+    const completedStatus = 11;
+    const notCompletedStatus = 1;
+    const status = completed ? completedStatus : notCompletedStatus;
+
+    await TasksRepository.updateStatus(taskId, { token, status });
+    await fetchTasks(false);
+  }
+
   return (
     <div className={styles.tasks}>
       <Header authenticated={Boolean(token)} onLogout={clearToken} />
@@ -147,6 +162,10 @@ function TasksView() {
                 username={task.username}
                 text={task.text}
                 completed={getTaskCompleted(task.status)}
+                statusUpdateEnabled={Boolean(token)}
+                onStatusUpdate={(completed: boolean) =>
+                  updateTaskStatus(task.id, completed)
+                }
               />
             ))
           )}
