@@ -9,3 +9,8 @@
   display: grid;
   row-gap: 20px;
 }
+
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+}
